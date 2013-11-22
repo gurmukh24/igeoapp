@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title></title>
+  
+  
+  <!--- CSS external file -------------->
+  <link rel="stylesheet" href="css/jquery.mobile-1.3.2.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+ 
+ 
+<!-- jQuery and jQuery Mobile -->
+  <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+  <script src="js/jquery-1.9.1.min.js"></script>
+  <script src="js/jquery.mobile-1.3.2.min.js"></script>
+  <script type="text/javascript" src="PushNotification.js"></script>
+
+ 	<!-- Validation External File -->
+	
+  <script src="js/validation.js"></script>
+  
+  <!----- Get Device Related Data ----------->
+  <script type="text/javascript" charset="utf-8">
+
+    // Wait for Cordova to load
+
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    // Cordova is ready
+    
+    function onDeviceReady() {
+           
+         
+                                
+                             DeviceId = device.uuid;
+                             Version =  device.version;
+                             Platform = device.platform;
+                        
+                             
+                        }
+           
+     </script>
+     
+     
+     <!----- Get Push Id ------------->
+    <script type="text/javascript">
+            var pushNotification;
+            
+            function onDeviceReady() {
+         
+                
+	
+			
+				try 
+				{ 
+                	pushNotification = window.plugins.pushNotification;
+                	if (device.platform == 'android' || device.platform == 'Android') {
+						
+						
+						if(localStorage.device_register == 0)
+						{
+						
+						 
+                    	pushNotification.register(successHandler, errorHandler, {"senderID":"212636738308","ecb":"onNotificationGCM"});		// required!
+                    	}
+                    	
+					} else {
+						$("#app-status-ul").append('<li>registering iOS</li>');
+                    	pushNotification.register(tokenHandler, errorHandler, {"badge":"true","sound":"true","alert":"true","ecb":"onNotificationAPN"});	// required!
+                	}
+                }
+				catch(err) 
+				{ 
+					txt="There was an error on this page.\n\n"; 
+					txt+="Error description: " + err.message + "\n\n"; 
+					alert(txt); 
+				} 
+            }
+            
+            // handle APNS notifications for iOS
+            function onNotificationAPN(e) {
+                if (e.alert) {
+                     $("#app-status-ul").append('<li>push-notification: ' + e.alert + '</li>');
+                     navigator.notification.alert(e.alert);
+                }
+                    
+                if (e.sound) {
+                    var snd = new Media(e.sound);
+                    snd.play();
+                }
+                
+                if (e.badge) {
+                    pushNotification.setApplicationIconBadgeNumber(successHandler, e.badge);
+                }
+            }
+            
+            // handle GCM notifications for Android
+            function onNotificationGCM(e) {
+           
+               
+                
+                switch( e.event )
+                {
+                
+                    case 'registered':
+					if ( e.regid.length > 0 )
+					{
+					
+						
+						// Your GCM push server needs to know the regID before it can push to this device
+						// here is where you might want to send it the regID for later use.
+						console.log("regID = " + e.regID);
+						localStorage.push_id  = e.regid;
+						localStorage.device_register = 1; 
+						
+						
+					
+					}
+                    break;
+                    
+                    case 'message':
+                    	// if this flag is set, this notification happened while we were in the foreground.
+                    	// you might want to play a sound to get the user's attention, throw up a dialog, etc.
+                    	if (e.foreground)
+                    	{
+                    	alert("foreground");
+							$("#app-status-ul").append('<li>--INLINE NOTIFICATION--' + '</li>');
+							
+							// if the notification contains a soundname, play it.
+							var my_media = new Media("/android_asset/www/"+e.soundname);
+							my_media.play();
+						}
+						else
+						{	
+						alert("background");
+							// otherwise we were launched because the user touched a notification in the notification tray.
+							if (e.coldstart)
+								$("#app-status-ul").append('<li>--COLDSTART NOTIFICATION--' + '</li>');
+							else
+							$("#app-status-ul").append('<li>--BACKGROUND NOTIFICATION--' + '</li>');
+						}
+							
+						$("#app-status-ul").append('<li>MESSAGE -> MSG: ' + e.payload.message + '</li>');
+						$("#app-status-ul").append('<li>MESSAGE -> MSGCNT: ' + e.payload.msgcnt + '</li>');
+                    break;
+                    
+                    case 'error':
+						$("#app-status-ul").append('<li>ERROR -> MSG:' + e.msg + '</li>');
+                    break;
+                    
+                    default:
+						$("#app-status-ul").append('<li>EVENT -> Unknown, an event was received and we do not know what it is</li>');
+                    break;
+                }
+            }
+            
+            function tokenHandler (result) {
+                $("#app-status-ul").append('<li>token: '+ result +'</li>');
+                // Your iOS push server needs to know the token before it can push to this device
+                // here is where you might want to send it the token for later use.
+            }
+			
+            function successHandler (result) {
+                $("#app-status-ul").append('<li>success:'+ result +'</li>');
+            }
+            
+            function errorHandler (error) {
+                $("#app-status-ul").append('<li>error:'+ error +'</li>');
+            }
+            
+			document.addEventListener('deviceready', onDeviceReady, true);
+
+         </script>
+  
+  
+   
+</head>
+<body>
+<!-- Home -->
+<div data-role="page" id="page1">
+    <div data-theme="a" data-role="header">
+        <h3>
+            Log In
+        </h3>
+    </div>
+    <div data-role="content">
+        <div class="logo">
+          <a class="ui-link" href=""> <img id="Logo" src="images/logo.png"> </a> 
+        </div>
+        <div data-role="fieldcontain" id="error_email" style="display:none;">
+		</div>
+		<div data-role="fieldcontain" id="error_pwd" style="display:none;">
+		</div>
+		<div data-role="fieldcontain" id="error_message" style="display:none;">
+		</div>
+	
+		
+        <div data-role="fieldcontain" class="ui-hide-label login">
+          <input class="email" type="text" name="email_id" id="email_id" value="" placeholder="Email"/>
+          <input class="lock" type="password" name="password" id="password" value="" placeholder="Password"/>
+        </div>
+	
+             <input type="checkbox" name="checkbox-1" id="checkbox-1" class="custom" />
+             <label for="checkbox-1">Stay Signed In</label>
+	
+	<input id="login_user" name="login_user" class="login_btn" value="Submit" data-mini="false" type="button" onclick="verify_user();"> 
+        
+      
+        
+    </div>
+    <!--
+    <div data-role="footer" data-position="fixed">      
+      <div data-id="mainTab" data-role="navbar">
+          <ul id="footer_tabs">
+              <li><a href="" data-transition="slideup" data-icon="search">History</a></li>
+              <li><a href="" class="ui-state-persist ui-btn-active" data-transition="slideup" data-icon="plus">Connect</a></li>
+              <li><a href="" data-transition="slideup" data-icon="refresh">Support</a></li>
+          </ul>
+      </div>
+  <div>
+  -->
+</div>
+
+<div data-role="page" id="page2">
+    <div data-theme="a" data-role="header">
+        <h3>
+            Alerts
+        </h3>
+    </div>
+    <div data-role="content">
+        <div class="alert_box">
+          <a class="wheather" href="#inbox_weather" id="weather_alerts" data-role="button" data-inline="false">Weather Alerts</a>
+          <a class="communication" href="#communication" data-role="button" data-inline="false">Communication alerts</a>
+          <a class="emergency" href="#emergency" data-role="button" data-inline="false">Mass emergency notifications</a>
+          <a class="email" href="" data-role="button" data-inline="false">View Email version
+          <div class="switch">
+            <select name="flip-1" id="flip-1" data-role="slider">
+              <option value="off">Off</option>
+              <option value="on">On</option>
+            </select>
+          </div>
+          </a>
+        </div>
+        <a class="settings" href="" data-role="button" data-inline="false">Settings</a>
+    </div>
+    <div data-role="footer" data-position="fixed">      
+      <div data-id="mainTab" data-role="navbar">
+          <ul id="footer_tabs">
+              <li><a href="" data-transition="slideup" data-icon="search">History</a></li>
+              <li><a href="" class="ui-state-persist ui-btn-active" data-transition="slideup" data-icon="plus">Connect</a></li>
+              <li><a href="" data-transition="slideup" data-icon="refresh">Support</a></li>
+          </ul>
+      </div>
+  </div>
+  </div>
+  
+  <!--start weather alert page code here-->
+  <div data-role="page" id="weather">
+    <div data-theme="a" data-role="header">
+        <h3>
+            Weather Alerts
+        </h3>
+    </div>
+    <div data-role="content">
+	<div class="weather_alertarea">
+        	<input type="text" value="" placeholder="To" class="weather_to" />
+		<p>Weather Alerts are shown here as Text messages,
+Also “Email” version of weather alerts is also available.
+By default Email version is shown but if only Text  Message is sent, 
+then Text 
+Message view is displayed 
+Weather Alerts are shown here as Text messages,
+Also “Email” version of weather alerts is also available.
+By default Email version is shown but if only Text  Message is sent, 
+then Text 
+Message view is displayed </p>
+		<a class="submit_btn" href="" data-role="button" data-inline="false">Submit</a>
+        </div>
+    </div>
+</div>
+  <!--end weather alert page code here-->
+  
+  
+  <!--start communication alert page code here-->
+<div data-role="page" id="communication">
+    <div data-theme="a" data-role="header">
+        <h3>
+            Communication alerts
+        </h3>
+    </div>
+    <div data-role="content">
+	<div class="weather_alertarea">
+        	<input type="text" value="" placeholder="To" class="weather_to" />
+		<p>Different Communication Alerts are shown here, “Email version 
+alerts is also avialable 
+By default Email version is shown but if only Text Message is sent, 
+then Text Message view is displayed .
+Different Communication Alerts are shown here, “Email version 
+alerts is also avialable
+Different Communication Alerts are shown here, “Email version 
+alerts is also avialable 
+By default Email version is shown but if only Text Message is sent, 
+then Text Message view is displayed .
+Different Communication Alerts are shown here, “Email version 
+alerts is also avialable</p>
+		<a class="submit_btn" href="" data-role="button" data-inline="false">Send</a>
+        </div>
+    </div>
+</div>
+
+<!--end weather alert page code here-->
+
+
+<!--start emergency alert page code here-->
+<div data-role="page" id="emergency">
+    <div data-theme="a" data-role="header">
+        <h3>
+            Mass emergency notifications
+        </h3>
+    </div>
+    <div data-role="content">
+	<div class="weather_alertarea">
+        	<input type="text" value="" placeholder="Notification" class="weather_to" />
+		<p>Different Communication Alerts are shown here, “Email version 
+alerts is also avialable 
+By default Email version is shown but if only Text Message is sent, 
+then Text Message view is displayed .
+Different Communication Alerts are shown here, “Email version 
+alerts is also avialable
+Different Communication Alerts are shown here, “Email version 
+alerts is also avialable 
+By default Email version is shown but if only Text Message is sent, 
+then Text Message view is displayed .
+Different Communication Alerts are shown here, “Email version 
+alerts is also avialable</p>
+        </div>
+    </div>
+</div>
+
+<!--end emergency alert page code here-->
+
+
+<!-- Start Inbox Weather Page for Weather-->
+<div data-role="page" id="inbox_weather">
+    <div data-theme="a" data-role="header">
+        <h3>
+            <img src="images/message_icon.png" alt="" class="message_icon"/>Inbox
+        </h3>
+    </div>
+    <div data-role="content">
+        	<ul data-role="listview" class="ui-listview">
+		      <li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li>
+			 <li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li> 
+			<li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li> 
+			<li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li>
+               </ul>
+        
+    </div>
+
+</div>
+
+<!--End Inbox Weather page code-->
+
+
+
+
+
+<!-- Start communication Weather Page for Weather-->
+<div data-role="page" id="inbox_weather">
+    <div data-theme="a" data-role="header">
+        <h3>
+            <img src="images/message_icon.png" alt="" class="message_icon"/>Communication Inbox
+        </h3>
+    </div>
+    <div data-role="content">
+        	<ul data-role="listview" class="ui-listview">
+		      <li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li>
+			 <li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li> 
+			<li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li> 
+			<li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li>
+               </ul>
+        
+    </div>
+
+</div>
+
+<!--End Inbox communication page code-->
+
+
+
+<!-- Start ememrgency Weather Page for Weather-->
+<div data-role="page" id="inbox_weather">
+    <div data-theme="a" data-role="header">
+        <h3>
+            <img src="images/message_icon.png" alt="" class="message_icon"/>Inbox
+        </h3>
+    </div>
+    <div data-role="content">
+        	<ul data-role="listview" class="ui-listview">
+		      <li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li>
+			 <li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li> 
+			<li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li> 
+			<li class="inbox">
+				<a href="#weather">
+					<img src="images/inbox.png" alt="" />
+					<div class="inbox_message">
+						<p>Lorem ipsum is dummy text</p>
+					</div>
+					<span class="date">
+						22 Nov 2013 12:13
+					</span>
+				</a>
+		      </li>
+               </ul>
+        
+    </div>
+
+</div>
+
+<!--End Inbox emergency page code-->
+
+
+
+
+
+
+
+</body>
+</html>
