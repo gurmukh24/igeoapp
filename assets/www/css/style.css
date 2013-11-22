@@ -330,3 +330,21 @@ img.message_icon
 	vertical-align:bottom;
 	margin-right:10px;
 }
+.ui-bar-a a.back_btn {
+    background:url(../images/back_btn.png) no-repeat scroll 0 0 / 10px auto rgba(0, 0, 0, 0);
+    box-shadow: none;
+    color: #FFFFFF;
+    font-size: 16px;
+    top:30%;
+}
+
+.ui-bar-a a.back_btn .ui-btn-inner {
+    border: medium none;
+    padding: 0px 0 0px 15px;
+}
+
+.ui-bar-a a.back_btn .ui-btn-inner .ui-btn-text {
+    font-size: 14px;
+    text-shadow: none;
+}
+

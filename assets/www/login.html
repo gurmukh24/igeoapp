@@ -10,6 +10,7 @@
   
   <!--- CSS external file -------------->
   <link rel="stylesheet" href="css/jquery.mobile-1.3.2.min.css" />
+  <link rel="stylesheet" href="css/iphone-landscape-width.css" />
   <link rel="stylesheet" href="css/style.css" />
  
  
@@ -234,8 +235,8 @@
     <div data-role="content">
         <div class="alert_box">
           <a class="wheather" href="#inbox_weather" id="weather_alerts" data-role="button" data-inline="false">Weather Alerts</a>
-          <a class="communication" href="#communication" data-role="button" data-inline="false">Communication alerts</a>
-          <a class="emergency" href="#emergency" data-role="button" data-inline="false">Mass emergency notifications</a>
+          <a class="communication" href="#inbox_communication" data-role="button" data-inline="false">Communication alerts</a>
+          <a class="emergency" href="#inbox_emergency" data-role="button" data-inline="false">Mass emergency notifications</a>
           <a class="email" href="" data-role="button" data-inline="false">View Email version
           <div class="switch">
             <select name="flip-1" id="flip-1" data-role="slider">
@@ -347,6 +348,7 @@ alerts is also avialable</p>
 <!-- Start Inbox Weather Page for Weather-->
 <div data-role="page" id="inbox_weather">
     <div data-theme="a" data-role="header">
+       <a data-rel="back" href="#page2" class="back_btn">Back</a>
         <h3>
             <img src="images/message_icon.png" alt="" class="message_icon"/>Inbox
         </h3>
@@ -410,8 +412,9 @@ alerts is also avialable</p>
 
 
 <!-- Start communication Weather Page for Weather-->
-<div data-role="page" id="inbox_weather">
+<div data-role="page" id="inbox_communication">
     <div data-theme="a" data-role="header">
+    <a data-rel="back" href="#page2" class="back_btn">Back</a>
         <h3>
             <img src="images/message_icon.png" alt="" class="message_icon"/>Communication Inbox
         </h3>
@@ -419,7 +422,7 @@ alerts is also avialable</p>
     <div data-role="content">
         	<ul data-role="listview" class="ui-listview">
 		      <li class="inbox">
-				<a href="#weather">
+				<a href="#communication">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
@@ -430,7 +433,7 @@ alerts is also avialable</p>
 				</a>
 		      </li>
 			 <li class="inbox">
-				<a href="#weather">
+				<a href="#communication">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
@@ -441,7 +444,7 @@ alerts is also avialable</p>
 				</a>
 		      </li> 
 			<li class="inbox">
-				<a href="#weather">
+				<a href="#communication">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
@@ -452,7 +455,7 @@ alerts is also avialable</p>
 				</a>
 		      </li> 
 			<li class="inbox">
-				<a href="#weather">
+				<a href="#communication">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
@@ -472,9 +475,10 @@ alerts is also avialable</p>
 
 
 
-<!-- Start ememrgency Weather Page for Weather-->
-<div data-role="page" id="inbox_weather">
+<!-- Start ememrgency inbox Page for Weather-->
+<div data-role="page" id="inbox_emergency">
     <div data-theme="a" data-role="header">
+    <a data-rel="back" href="#page2" class="back_btn">Back</a>
         <h3>
             <img src="images/message_icon.png" alt="" class="message_icon"/>Inbox
         </h3>
@@ -482,7 +486,7 @@ alerts is also avialable</p>
     <div data-role="content">
         	<ul data-role="listview" class="ui-listview">
 		      <li class="inbox">
-				<a href="#weather">
+				<a href="#emergency">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
@@ -493,7 +497,7 @@ alerts is also avialable</p>
 				</a>
 		      </li>
 			 <li class="inbox">
-				<a href="#weather">
+				<a href="#emergency">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
@@ -504,7 +508,7 @@ alerts is also avialable</p>
 				</a>
 		      </li> 
 			<li class="inbox">
-				<a href="#weather">
+				<a href="#emergency">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
@@ -515,7 +519,7 @@ alerts is also avialable</p>
 				</a>
 		      </li> 
 			<li class="inbox">
-				<a href="#weather">
+				<a href="#emergency">
 					<img src="images/inbox.png" alt="" />
 					<div class="inbox_message">
 						<p>Lorem ipsum is dummy text</p>
